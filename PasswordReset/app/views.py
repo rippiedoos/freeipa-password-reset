@@ -41,7 +41,7 @@ class SetPassword(View):
             'uid': request.GET['uid'],
         }
         return HttpResponse(template.render(context, request))
-    
+
     def post(self, request, *args, **kwargs):
         try:
             PasswdManager().second_phase(request.POST['uid'], request.POST['token'], request.POST['password1'])
@@ -56,7 +56,7 @@ class SetPassword(View):
         else:
             template = loader.get_template('setpassword.html')
             context = {
-                'msg': mark_safe('Password successfully changed. <a href="/ipa/ui/">You can login here.</a>'),
+                'msg': mark_safe('Password successfully changed.'),
                 'error': False,
                 'uid': request.POST['uid'],
             }

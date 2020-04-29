@@ -1,111 +1,45 @@
-{% extends 'base.html' %} {% block content %}
-<div id="container" class="app-container" style="display: none;">
-   <nav class="navbar navbar-default navbar-pf" role="navigation">
-      <div class="navbar-header"><button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-21"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand"
-         href="#"><img src="/ipa/ui/images/header-logo.png" alt="Identity Management"></a></div>
-      <div class="collapse navbar-collapse navbar-collapse-21">
-      </div>
-   </nav>
-   <div class="content"></div>
-   <div class="widget global-activity-indicator slider">
-      <div class="activity-row">
-         <div class="activity-text"><i class="fa fa-spinner fa-spin"></i> Working</div>
-      </div>
-   </div>
+{% extends 'base.html' %} {% block content%}
+<div class="container">
+	<img class="p-5 mx-auto d-block" src="https://www.thunderbyte.ai/wp-content/uploads/2020/03/Thunderbyte-ai-logo-diap-681x236-1.svg" srcset="https://www.thunderbyte.ai/wp-content/uploads/2020/03/Thunderbyte-ai-logo-diap-681x236-1.svg 1x" width="681" height="236" >
+	<div class="row justify-content-center">
+		<div class="col-md-4">
+
+			<div name="" id="insert-here">
+			{% if msg %}
+			{% if error %}
+				<span class="p-3 form-text alert alert-danger">{{msg}}</span>
+			{% else %}
+				<span class="p-3 form-text alert alert-success">{{msg}}</span>
+			{% endif %}
+			{% endif %}
+			</div>
+
+			<form id="reset-form" method="post" action="/reset/gettoken/">
+				<div class="form-group required">
+					<p name="uid" class="form-control-static d-none"></p>
+					{% csrf_token %}
+				</div>
+				<div class="form-group">
+				    <input name="uid" id="uid" type="text" class="form-control" placeholder="Username">
+				</div>
+
+				<div class="form-group required">
+					<select name="provider" id="provider" class="form-control" placeholder="Password">
+						{% for item in providers %}
+						<option value="{{item.id}}">{{item.display_name}}</option>
+						{% endfor %}
+					</select>
+
+				</div>
+
+				<button name="reset" type="submit"  class="btn btn-primary float-right">Reset Password</button>
+			</form>
+
+
+
+		</div>
+	</div>
+
 </div>
-<div id="simple-container" class="app-container">
-<div class="content">
-   <div class="facet active-facet" name="login" data-name="login">
-      <div class="widget global-activity-indicator slider closed"></div>
-      <div class="login-pf">
-         <div class="login-pf-body">
-            <span id="badge"><img src="/ipa/ui/images/login-screen-logo.png" alt=""></span>
-            <div class="container">
-               <div class="row">
-                  <div class="col-sm-12">
-                     <div id="brand"><img src="/ipa/ui/images/product-name.png" height="80px"></div>
-                  </div>
-                  <div class="col-sm-7 col-md-7 col-lg-6 login">
-                     {% if msg %}
-                     {% if error %}
-                     <div class="form-group">
-                        <div class="col-sm-3 col-md-3 control-label"><label name="validation" class=""></label></div>
-                        <div class="col-sm-9 col-md-9 controls">
-                           <div name="validation" class="widget validation-summary" style="">
-                              <div>
-                                 <div data-name="sync" class="fade in alert alert-danger"><span class="fa fa-exclamation-circle"></span> {{msg}}</div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     {% else %}
-                     <div class="form-group">
-                        <div class="col-sm-3 col-md-3 control-label"><label name="validation" class=""></label></div>
-                        <div class="col-sm-9 col-md-9 controls">
-                           <div name="validation" class="widget validation-summary">
-                              <div>
-                                 <div data-name="sync" class="fade in alert alert-success"><span class="fa fa-exclamation-circle"></span> {{msg}}</div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     {% endif %}
-                     {% endif %}
-                     <form id="reset-form" method="post" action="/reset/gettoken/">
-                        <div class="form-horizontal">
-                           <div class="form-group required">
-                              <div class="col-sm-3 col-md-3 control-label">
-                                 <label name="uid" class="" for="uid">Username</label>
-                              </div>
-                              <div class="col-sm-9 col-md-9 controls">
-                                 <div name="uid" class="widget text-widget valid">
-                                    <p name="uid" class="form-control-static" style="display: none;"></p>
-                                    {% csrf_token %}
-                                    <div>
-                                       <input type="text" name="uid" id="uid" class="form-control" title="" placeholder="Username" autocomplete="off">
-                                       <div class="input-group-btn"></div>
-                                    </div>
-                                    <span name="error_link" class="help-block" style="display:none"></span>
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="form-group required">
-                              <div class="col-sm-3 col-md-3 control-label">
-                                 <label name="provider" class="" for="provider">2FA Provider</label>
-                              </div>
-                              <div class="col-sm-9 col-md-9 controls">
-                                 <div name="provider" class="widget text-widget valid">
-                                    <p name="provider" class="form-control-static" style="display: none;"></p>
-                                    <div>
-                                       <select id="provider" name="provider"  class="form-control" form="reset-form">
-                                          {% for item in providers %}
-                                          <option value="{{item.id}}">{{item.display_name}}</option>
-                                          {% endfor %}
-                                       </select>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="form-group" style="display:none"></div>
-                        </div>
-                     </form>
-                     <div class="row">
-                        <div class="col-sm-12 col-md-offset-3 col-md-9 submit">
-                           <input type="button" onclick="location.href='/ipa/ui';" class="btn btn-default btn-danger btn-lg" value="Cancel" />
-                           <button name="reset" title="Reset password" form="reset-form" class="btn btn-default btn-primary btn-lg" type="submit">Reset Password</button>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-sm-5 col-md-5 col-lg-6 details">
-                     <p><i class="fa fa-info-circle"></i> To reset password enter <strong>username</strong> in the corresponding field and select token delivery method, then click Reset.</p>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</div>
-<div id="notification" class="">
-   <div class="content"></div>
-</div>
+
 {% endblock %}

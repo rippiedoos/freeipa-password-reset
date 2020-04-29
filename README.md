@@ -29,13 +29,12 @@ ipa -n user-add "ldap-passwd-reset" --first="Service" --last="Password reset" --
 2. Create new role with permission to change passwords
 ```
 ipa role-add "Self Password Reset"
-ipa role-add-member "Self Password Reset" --users="ldap-passwd-reset"
 ipa role-add-privilege "Self Password Reset" --privileges="Modify Users and Reset passwords"
 ipa role-add-privilege "Self Password Reset" --privileges="Password Policy Readers"
-ipa role-add-privilege "Self Password Reset" --privileges="Kerberos Ticket Policy Readers"
-ipa permission-mod "System: Change User password" --includedattrs="krbloginfailedcount"
+ipa service-add 'ldap-passwd-reset/domain.tld'
+ipa role-add-member 'Self Password Reset' --services='ldap-passwd-reset/domain.tld'
 ```
-3. Create user home dir
+3. Create user home dir (obsoleted by service)
 ```
 mkdir $(ipa -n user-show "ldap-passwd-reset" --raw |grep 'homedirectory' |awk -F':' '{print $2}')
 chown ldap-passwd-reset.ldap-passwd-reset $(ipa -n user-show "ldap-passwd-reset" --raw |grep 'homedirectory' |awk -F':' '{print $2}')
@@ -77,7 +76,10 @@ pip install -r requirements.txt
 ```
 4. Get keytab for "ldap-passwd-reset" user (you must run it from user with admin privileges):
 ```
-ipa-getkeytab -p ldap-passwd-reset -k /opt/data/IPAPasswordReset/ldap-passwd-reset.keytab
+ipa-getkeytab -p 'ldap-passwd-reset/domain.told' -s domain.tld -k /opt/IPAPasswordReset/ldap-passwd-reset.keytab
+kinit -t /opt/IPAPasswordReset/ldap-passwd-reset.keytab -k ldap-passwd-reset/domain.told
+klist
+ldapwhoami -Y GSSAPI
 ```
 5. chown files (change username if you use not default):
 ```
@@ -95,9 +97,9 @@ systemctl enable --now redis
 ```
 8. Copy file `PasswordReset/PasswordReset/settings.py.example` to `PasswordReset/PasswordReset/settings.py` and modify it. You should change following vars:
 ```
-SECRET_KEY = "Your CSRF protection key. It must be long random string"
-LDAP_USER = "LDAP user. Default is ldap-passwd-reset"
-KEYTAB_PATH = "Path to ldap-passwd-reset keytab. Default is ../ldap-passwd-reset.keytab"
+SECRET_KEY = "Your CSRF protection key. It must be long random string" # openssl rand -base64 32
+LDAP_USER = "ldap-passwd-reset/domain.tld
+KEYTAB_PATH = "/opt/IPAPasswordReset/ldap-passwd-reset.keytab"
 PROVIDERS = {...} # Configuration of 2FA providers like Amazon SNS (SMS), Email, Slack, Signal
 
 ```
